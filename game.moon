@@ -1,4 +1,4 @@
-local stars, windowScale, drillX 
+local stars, windowScale, drillX, rocketSpeed, rocketAngle
 images = {}
 players = {
 	a: {rotation: 0}
@@ -26,7 +26,8 @@ love.load = ->
 	images.planet = love.graphics.newImage("circle.png")
 	images.star = love.graphics.newImage("star.png")
 	windowScale = love.graphics.getHeight! / 400
-	drillX = scaleFunc(25) - 100
+	drillX = scaleFunc(25)
+	rocketSpeed = 2
 
 	stars = for k = 1, 100 {
 		x: math.random(love.graphics.getWidth! / windowScale), 
@@ -56,7 +57,7 @@ love.draw = (delta) ->
 		love.graphics.setColor(0, 1, 0)
 		love.graphics.draw(images.star, scaleFunc(75), 200, building.b.rotation + (k * 2 * math.pi / 5), 1, 1, 105 * math.sin(45), 105 * math.cos(45))
 		love.graphics.setColor(1, 1, 0.1)
-		love.graphics.draw(images.star, drillX, drillY)
+	love.graphics.draw(images.star, drillX, drillY, building.a.rotation + (3 * 2 * math.pi / 5), 1, 1, 105 * math.sin(45), 105 * math.cos(45))
 
 
 
@@ -65,10 +66,16 @@ love.update = (delta) ->
 		players.a.rotation -= delta
 	if love.keyboard.isDown("d")	
 		players.a.rotation += delta
-	if love.keyboard.isDown("s")
-		drillY = math.pow(counter, 2) + 200
-		counter += 0.2
-		drillX += 5
+	if drillY >= 50 and drillX <= scaleFunc(25)
+		drillY -= rocketSpeed
+	if drillY <= 100 and drillX <= scaleFunc(75) + 180
+		drillX += rocketSpeed
+	if drillX >= scaleFunc(75) + 180 and drillY <= 200
+		drillY += rocketSpeed
+
+
+
+					 
 
 
 

@@ -7,7 +7,6 @@ function love.load()
     world:setCallbacks(beginContact, endContact, preSolve, postSolve)
 	love.window.setMode(displayWidth, displayHeight)
 	text = ""
-	newX, newY = 0, 0
 
 	playerPlanetDiff = 80
 	starImg = love.graphics.newImage("star.png")
@@ -78,6 +77,9 @@ function love.load()
 		stars.y[i] = math.random(displayHeight)
 	end
 
+	newX, newY = player.body:getX(), player.body:getY()
+	local working = false
+
 
 end
 
@@ -87,9 +89,12 @@ function love.update(dt)
 	local playerX, playerY = player.body:getPosition()
 	local planetPlayerVec = math.sqrt(math.pow(playerX - planets.a.body:getX(), 2) + math.pow(playerY - planets.a.body:getY(), 2))
 	local planetPlayerMax = math.sqrt(math.pow(newX - planets.a.body:getX(), 2) + math.pow(newY - planets.a.body:getY(), 2))
-	if planetPlayerVec > planetPlayerMax then 
+	if planetPlayerVec >= planetPlayerMax then 
 		player.body:setX(planets.a.xCenter + math.cos(player.angle) * (planets.a.r + playerPlanetDiff))
 		player.body:setY(planets.a.yCenter + math.sin(player.angle) * (planets.a.r + playerPlanetDiff))
+		working = false
+	else 
+		working = true
 	end
 
 	-- playerb.body:applyForce(0, 100)
@@ -105,7 +110,7 @@ function love.update(dt)
 		player.angle = player.angle - player.speed
 		player.body:setX(planets.a.xCenter + math.cos(player.angle) * (planets.a.r + playerPlanetDiff))
 		player.body:setY(planets.a.yCenter + math.sin(player.angle) * (planets.a.r + playerPlanetDiff))
-	elseif love.keyboard.isDown("s") then 
+	elseif love.keyboard.isDown("s") and working == false then
 		newX, newY = player.body:getPosition() 
 		player.body:setLinearVelocity(planets.a.body:getX() - playerX, planets.a.body:getY() - playerY)
 	end
